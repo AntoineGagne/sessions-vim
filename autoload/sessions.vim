@@ -1,8 +1,8 @@
-function! SaveSession()
+function! SaveSession(generate_filename)
     let session_path = join([g:sessions_directory, fnamemodify(getcwd(), ":t")], '/')
     call CreateDirectoryIfItDoesNotExists(session_path)
-    let session_file = join([session_path, GetGitBranchName()], '/')
-    execute 'mksession' fnameescape(session_file)
+    let session_file = join([session_path, a:generate_filename()], '/')
+    execute 'mksession!' fnameescape(session_file)
 endfunction
 
 function! GetGitBranchName()
