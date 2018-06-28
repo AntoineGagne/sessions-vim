@@ -1,40 +1,41 @@
-function! SaveSession(generate_filename, force)
-    let session_path = join([g:sessions_directory, fnamemodify(getcwd(), ":t")], '/')
+function! SaveSession(save_session, generate_filename)
+    let session_path = GetSessionCurrentPath()
     call CreateDirectoryIfItDoesNotExists(session_path)
-    let session_file = join([session_path, a:generate_filename()], '/')
-    call WriteSession(fnameescape(session_file . g:session_extension), a:force)
+    let filename = a:generate_filename()
+    if !exists('filename')
+        let filename = g:session_default_name
+    endif
+    let session_file = join([session_path, filename], '/')
+    let session_file = session_file . g:session_extension
+    execute a:save_session fnameescape(session_file)
 endfunction
 
-function! WriteSession(filename, force)
-    let write_command = CreateForcedCommand(g:save_session, a:force)
-    execute write_command a:filename
+function! LoadSession(load_session, filename)
+    execute a:load_session fnameescape(a:filename)
 endfunction
 
-function! LoadSession(filename, force)
-    let read_command = CreateForcedCommand(g:restore_session, a:force)
-    execute read_command a:filename
+function! GetSessions()
+    let session_path = join([g:sessions_directory, fnamemodify(getcwd(), ":t")], '/')
+    return split(globpath(session_path, '*'), '\n')
 endfunction
 
 function! GetGitBranchName()
-    let current_branch = fnameescape(system("git symbolic-ref -q --short HEAD"))
-    if !exists('current_branch')
-        let current_branch = g:default_name
-    endif
+    let current_branch = system("git symbolic-ref -q --short HEAD")
 
-    return current_branch
+    return Chomp(current_branch)
+endfunction
+
+function! GetSessionCurrentPath()
+    let working_directory = fnamemodify(getcwd(), ":t")
+    return join([g:sessions_directory, working_directory], '/')
 endfunction
 
 function! CreateDirectoryIfItDoesNotExists(directory_name)
     if !isdirectory(a:directory_name)
         call mkdir(a:directory_name, "p", 0700)
     endif
-endfun
+endfunction
 
-function! CreateForcedCommand(command, force)
-    let updated_command = a:command
-    if a:force
-        let updated_command = updated_command . '!'
-    endif
-
-    return updated_command
+function! Chomp(string)
+    return substitute(a:string, '[[:cntrl:]]', '', 'g')
 endfunction
