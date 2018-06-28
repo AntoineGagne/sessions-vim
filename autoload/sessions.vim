@@ -16,7 +16,7 @@ endfunction
 
 function! sessions#GetSessions()
     let session_path = s:GetSessionCurrentPath()
-    return split(globpath(session_path, '*'), '\n')
+    return split(globpath(session_path, '**'), '\n')
 endfunction
 
 function! s:GetSessionCurrentPath()
