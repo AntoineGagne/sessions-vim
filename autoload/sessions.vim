@@ -15,7 +15,7 @@ function! sessions#LoadSession(load_session, filename)
 endfunction
 
 function! sessions#GetSessions()
-    let session_path = GetSessionCurrentPath()
+    let session_path = s:GetSessionCurrentPath()
     return split(globpath(session_path, '*'), '\n')
 endfunction
 
