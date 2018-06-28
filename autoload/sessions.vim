@@ -14,12 +14,12 @@ function! sessions#LoadSession(load_session, filename)
     execute a:load_session fnameescape(a:filename)
 endfunction
 
-function! GetSessions()
-    let session_path = join([g:sessions_directory, fnamemodify(getcwd(), ":t")], '/')
+function! sessions#GetSessions()
+    let session_path = GetSessionCurrentPath()
     return split(globpath(session_path, '*'), '\n')
 endfunction
 
-function! session#GetSessionCurrentPath()
+function! GetSessionCurrentPath()
     let working_directory = fnamemodify(getcwd(), ":t")
     return join([g:sessions_directory, working_directory], '/')
 endfunction
