@@ -1,12 +1,12 @@
 function! sessions#SaveSession(save_session, generate_filename)
-    let session_path = GetSessionCurrentPath()
-    call CreateDirectoryIfItDoesNotExists(session_path)
+    let session_path = s:GetSessionCurrentPath()
     let filename = a:generate_filename()
     if !exists('filename')
         let filename = g:session_default_name
     endif
+    let filename = filename . g:session_extension
     let session_file = join([session_path, filename], '/')
-    let session_file = session_file . g:session_extension
+    call s:CreateDirectoryIfItDoesNotExists(fnamemodify(session_file, ':h'))
     execute a:save_session fnameescape(session_file)
 endfunction
 
@@ -19,12 +19,12 @@ function! sessions#GetSessions()
     return split(globpath(session_path, '*'), '\n')
 endfunction
 
-function! GetSessionCurrentPath()
+function! s:GetSessionCurrentPath()
     let working_directory = fnamemodify(getcwd(), ":t")
     return join([g:sessions_directory, working_directory], '/')
 endfunction
 
-function! CreateDirectoryIfItDoesNotExists(directory_name)
+function! s:CreateDirectoryIfItDoesNotExists(directory_name)
     if !isdirectory(a:directory_name)
         call mkdir(a:directory_name, "p", 0700)
     endif
