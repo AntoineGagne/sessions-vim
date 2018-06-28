@@ -16,7 +16,8 @@ endfunction
 
 function! sessions#GetSessions()
     let session_path = s:GetSessionCurrentPath()
-    return split(globpath(session_path, '**'), '\n')
+    let paths = split(globpath(session_path, '**'), '\n')
+    return filter(paths, {idx, path -> !isdirectory(path)})
 endfunction
 
 function! s:GetSessionCurrentPath()
